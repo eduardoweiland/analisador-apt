@@ -1,0 +1,208 @@
+{
+  "grammar": {
+    "nonTerminalSymbols": [
+      "E",
+      "T",
+      "F"
+    ],
+    "terminalSymbols": [
+      "v",
+      "&",
+      "¬",
+      "id"
+    ],
+    "productionSetSymbol": "P",
+    "productionStartSymbol": "E",
+    "productionRules": [
+      {
+        "leftSide": "E",
+        "rightSide": [
+          "EvT",
+          "T"
+        ]
+      },
+      {
+        "leftSide": "T",
+        "rightSide": [
+          "T&F",
+          "F"
+        ]
+      },
+      {
+        "leftSide": "F",
+        "rightSide": [
+          "¬F",
+          "id"
+        ]
+      }
+    ]
+  },
+  "step1": {
+    "nonTerminalSymbols": [
+      "E",
+      "T",
+      "F"
+    ],
+    "terminalSymbols": [
+      "v",
+      "&",
+      "¬",
+      "id"
+    ],
+    "productionSetSymbol": "P",
+    "productionStartSymbol": "E",
+    "productionRules": [
+      {
+        "leftSide": "E",
+        "rightSide": [
+          "EvT",
+          "T"
+        ]
+      },
+      {
+        "leftSide": "T",
+        "rightSide": [
+          "T&F",
+          "F"
+        ]
+      },
+      {
+        "leftSide": "F",
+        "rightSide": [
+          "¬F",
+          "id"
+        ]
+      }
+    ]
+  },
+  "step2": {
+    "nonTerminalSymbols": [
+      "E",
+      "T",
+      "F"
+    ],
+    "terminalSymbols": [
+      "v",
+      "&",
+      "¬",
+      "id"
+    ],
+    "productionSetSymbol": "P",
+    "productionStartSymbol": "E",
+    "productionRules": [
+      {
+        "leftSide": "E",
+        "rightSide": [
+          "EvT",
+          "T"
+        ]
+      },
+      {
+        "leftSide": "T",
+        "rightSide": [
+          "T&F",
+          "F"
+        ]
+      },
+      {
+        "leftSide": "F",
+        "rightSide": [
+          "¬F",
+          "id"
+        ]
+      }
+    ]
+  },
+  "step3": {
+    "nonTerminalSymbols": [
+      "E",
+      "T",
+      "F"
+    ],
+    "terminalSymbols": [
+      "v",
+      "&",
+      "¬",
+      "id"
+    ],
+    "productionSetSymbol": "P",
+    "productionStartSymbol": "E",
+    "productionRules": [
+      {
+        "leftSide": "E",
+        "rightSide": [
+          "T",
+          "EvT"
+        ]
+      },
+      {
+        "leftSide": "T",
+        "rightSide": [
+          "T&F",
+          "¬F",
+          "id"
+        ]
+      },
+      {
+        "leftSide": "F",
+        "rightSide": [
+          "¬F",
+          "id"
+        ]
+      }
+    ]
+  },
+  "step4": {
+    "nonTerminalSymbols": [
+      "E",
+      "T",
+      "F",
+      "E'",
+      "T'"
+    ],
+    "terminalSymbols": [
+      "v",
+      "&",
+      "¬",
+      "id"
+    ],
+    "productionSetSymbol": "P",
+    "productionStartSymbol": "E",
+    "productionRules": [
+      {
+        "leftSide": "E",
+        "rightSide": [
+          "TE'"
+        ]
+      },
+      {
+        "leftSide": "E'",
+        "rightSide": [
+          "vTE'",
+          "ε"
+        ]
+      },
+      {
+        "leftSide": "T",
+        "rightSide": [
+          "¬FT'",
+          "idT'"
+        ]
+      },
+      {
+        "leftSide": "T'",
+        "rightSide": [
+          "&FT'",
+          "ε"
+        ]
+      },
+      {
+        "leftSide": "F",
+        "rightSide": [
+          "¬F",
+          "id"
+        ]
+      }
+    ]
+  }
+}
