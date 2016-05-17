@@ -1,5 +1,5 @@
 {
-  "name": "transformacoes-glc",
+  "name": "analisador-apt",
   "version": "0.1.0",
   "description": "Trabalho II de Linguagens Formais - UNISC",
   "main": "index.js",

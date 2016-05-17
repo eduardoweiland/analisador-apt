@@ -27,10 +27,7 @@ require(['knockout', 'jquery', 'grammar', 'transformations', 'file-saver-js', 'k
 
     function App() {
         this.grammar = new Grammar();
-        this.step1 = ko.observable();
-        this.step2 = ko.observable();
-        this.step3 = ko.observable();
-        this.step4 = ko.observable();
+        this.transformedGrammar = ko.observable();
     }
 
     App.prototype = {
@@ -71,20 +68,13 @@ require(['knockout', 'jquery', 'grammar', 'transformations', 'file-saver-js', 'k
             reader.readAsText(files[0]);
         },
 
-        runStep1: function() {
-            this.step1(Transformations.removeUselessSymbols(this.grammar));
-        },
+        transformLL1: function() {
+            var step1 = Transformations.removeUselessSymbols(this.grammar);
+            var step2 = Transformations.removeEmptyProductions(step1);
+            var step3 = Transformations.factor(step2);
+            var step4 = Transformations.removeLeftRecursion(step3);
 
-        runStep2: function() {
-            this.step2(Transformations.removeEmptyProductions(this.step1()));
-        },
-
-        runStep3: function() {
-            this.step3(Transformations.factor(this.step2()));
-        },
-
-        runStep4: function() {
-            this.step4(Transformations.removeLeftRecursion(this.step3()));
+            this.transformedGrammar(step4);
         }
     };
 
