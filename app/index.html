@@ -94,13 +94,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-info">
+                <div class="panel panel-success">
                     <div class="panel-heading">
                         <div class="btn-group pull-right">
-                            <button data-bind="click: transformLL1" class="btn btn-info btn-sm"><i class="fa fa-play"></i> Transformar</button>
+                            <button data-bind="click: transformLL1" class="btn btn-success btn-sm"><i class="fa fa-play"></i> Transformar</button>
                         </div>
                         <h3 class="panel-title">
-                            <i class="fa fa-times"></i>&nbsp;&nbsp;&nbsp;Transformação para LL(1)
+                            <i class="fa fa-exchange"></i>&nbsp;&nbsp;&nbsp;Transformação para LL(1)
                         </h3>
                     </div>
                     <div class="panel-body" data-bind="with: transformedGrammar">
@@ -109,6 +109,46 @@
                 </div>
             </div>
             <div class="col-sm-6">
+                <div class="panel panel-danger">
+                    <div class="panel-heading clearfix">
+                        <h3 class="panel-title">
+                            <i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;Tabela de Transição de Estados
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div data-bind="with: transformedGrammar">
+                            <table class="table table-bordered table-spacing" data-bind="visible: completed && validationErrors().length === 0">
+                                <tbody>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <!-- ko foreach: terminalSymbols -->
+                                        <th data-bind="text: $data"></th>
+                                        <!-- /ko -->
+                                        <th>$</th>
+                                    </tr>
+                                    <!-- ko foreach: nonTerminalSymbols -->
+                                    <tr>
+                                        <th data-bind="text: $data"></th>
+                                        <!-- ko foreach: $parent.terminalSymbols -->
+                                        <td></td>
+                                        <!-- /ko -->
+                                        <td></td>
+                                    </tr>
+                                    <!-- /ko -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-warning">
+                    <div class="panel-heading clearfix">
+                        <h3 class="panel-title">
+                            <i class="fa fa-trophy"></i>&nbsp;&nbsp;&nbsp;Reconhecimento de Sentenças
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
