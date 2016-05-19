@@ -102,6 +102,17 @@ define(function() {
             }
 
             return [-1, null];
+        },
+
+        /**
+         * Verifica se a `string` começa com `search`.
+         *
+         * @param {string} string String que deve ser verificada.
+         * @param {string} search Valor que deve ser procurado no início da string.
+         * @returns {boolean} Retorna `true` se `string` começa com `search`, senão retorna `false`.
+         */
+        stringStartsWith: function(string, search) {
+            return string.substr(0, search.length) === search;
         }
 
     };

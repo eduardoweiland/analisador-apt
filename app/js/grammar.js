@@ -69,6 +69,22 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
             this.validationErrors = ko.pureComputed(this.validate,          this);
             this.formalism        = ko.pureComputed(this.toFormalismString, this);
 
+            this.cacheFirst = {};
+            this.cacheFollow = {};
+
+            this.allFirst = ko.pureComputed(function() {
+                var first = '';
+                var nt = this.nonTerminalSymbols();
+
+                for (var i = 0, l = nt.length; i < l; ++i) {
+                    first += 'FIRST(' + nt[i] + ') = ';
+                    first += this.first(nt[i]).join(', ');
+                    first += '\n';
+                }
+
+                return first;
+            }, this);
+
             if (data.productionRules) {
                 for (var i = 0, l = data.productionRules.length; i < l; ++i) {
                     this.productionRules.push(new ProductionRule(this, data.productionRules[i]));
@@ -281,6 +297,46 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
                 }
             }
             return [];
+        },
+
+        first: function(symbol) {
+            if (typeof this.cacheFirst[symbol] !== 'undefined') {
+                return this.cacheFirst[symbol];
+            }
+
+            var right = this.getProductions(symbol);
+            var t = this.terminalSymbols();
+            var nt = this.nonTerminalSymbols();
+            var first = [];
+
+            // Para cada produção do símbolo especificado:
+            for (var i = 0, l = right.length; i < l; ++i) {
+                // Se começa com um símbolo terminal, adiciona esse terminal ao FIRST
+                for (var j = 0, m = t.length; j < m; ++j) {
+                    if (utils.stringStartsWith(right[i], t[j])) {
+                        // Produção começa com esse terminal, adiciona ao FIRST
+                        first.push(t[j]);
+                        break;
+                    }
+                }
+
+                // Se não começa com um símbolo terminal, deve pegar o FIRST do NT do começo da produção
+                if (j >= m) {
+                    for (j = 0, m = nt.length; j < m; ++j) {
+                        if (utils.stringStartsWith(right[i], nt[j])) {
+                            // Encontrou o NT do começo dessa produção, então:
+                            // - se não for o mesmo da produção atual, busca o FIRST dele
+                            if (nt[j] !== symbol) {
+                                first = first.concat(this.first(nt[j]));
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            this.cacheFirst[symbol] = first;
+            return first;
         },
 
         toJSON: function() {
