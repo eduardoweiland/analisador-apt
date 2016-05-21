@@ -22,12 +22,22 @@
  * THE SOFTWARE.
  */
 
-require(['knockout', 'jquery', 'grammar', 'transformations', 'file-saver-js', 'ko-tagsinput'], function(ko, $, Grammar, Transformations, saveAs) {
+require(['knockout', 'jquery', 'grammar', 'transformations', 'syntacticanalysis', 'file-saver-js', 'ko-tagsinput'], function(ko, $, Grammar, Transformations, SyntacticAnalysis, saveAs) {
     'use strict';
 
     function App() {
         this.grammar = new Grammar();
         this.transformedGrammar = ko.observable();
+
+        this.syntacticAnalysis = ko.pureComputed(function() {
+            var grammar = this.transformedGrammar();
+
+            if (grammar && grammar.isCompleted() && grammar.isValid()) {
+                return new SyntacticAnalysis(grammar);
+            }
+
+            return null;
+        }, this);
     }
 
     App.prototype = {

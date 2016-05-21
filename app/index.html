@@ -112,32 +112,14 @@
                 <div class="panel panel-danger">
                     <div class="panel-heading clearfix">
                         <h3 class="panel-title">
-                            <i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;Tabela de Transição de Estados
+                            <i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;Tabela Sintática Preditiva
                         </h3>
                     </div>
                     <div class="panel-body">
-                        <div data-bind="with: transformedGrammar">
-                            <pre data-bind="text: allFirst"></pre>
-                            <pre data-bind="text: allFollow"></pre>
-                            <table class="table table-bordered table-spacing" data-bind="visible: completed && validationErrors().length === 0">
-                                <tbody>
-                                    <tr>
-                                        <th>&nbsp;</th>
-                                        <!-- ko foreach: terminalSymbols -->
-                                        <th data-bind="text: $data"></th>
-                                        <!-- /ko -->
-                                        <th>$</th>
-                                    </tr>
-                                    <!-- ko foreach: nonTerminalSymbols -->
-                                    <tr>
-                                        <th data-bind="text: $data"></th>
-                                        <!-- ko foreach: $parent.terminalSymbols -->
-                                        <td></td>
-                                        <!-- /ko -->
-                                        <td></td>
-                                    </tr>
-                                    <!-- /ko -->
-                                </tbody>
+                        <div data-bind="with: syntacticAnalysis">
+                            <pre data-bind="text: firstAllSymbols"></pre>
+                            <pre data-bind="text: followAllSymbols"></pre>
+                            <table class="table table-bordered table-spacing">
                             </table>
                         </div>
                     </div>
