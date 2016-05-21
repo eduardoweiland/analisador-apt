@@ -119,7 +119,23 @@
                         <div data-bind="with: syntacticAnalysis">
                             <pre data-bind="text: firstAllSymbols"></pre>
                             <pre data-bind="text: followAllSymbols"></pre>
-                            <table class="table table-bordered table-spacing">
+                            <table class="table table-bordered table-spacing" data-bind="with: predictiveTable">
+                                <tbody>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <!-- ko foreach: columns -->
+                                        <th data-bind="text: $data"></th>
+                                        <!-- /ko -->
+                                    </tr>
+                                    <!-- ko foreach: rows -->
+                                    <tr>
+                                        <th data-bind="text: header"></th>
+                                        <!-- ko foreach: cells -->
+                                        <td data-bind="text: representation"></td>
+                                        <!-- /ko -->
+                                    </tr>
+                                    <!-- /ko -->
+                                </tbody>
                             </table>
                         </div>
                     </div>

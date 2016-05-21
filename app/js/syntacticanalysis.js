@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-define(['knockout', 'utils', 'productionrule'], function(ko, utils, ProductionRule) {
+define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, utils, ProductionRule, PredictiveTable) {
     'use strict';
 
     function SyntacticAnalysis() {
@@ -34,6 +34,8 @@ define(['knockout', 'utils', 'productionrule'], function(ko, utils, ProductionRu
             this.grammar = grammar;
             this.cacheFirst = {};
             this.cacheFollow = {};
+
+            this.predictiveTable = ko.pureComputed(this.getPredictiveTable, this);
 
             this.firstAllSymbols = ko.pureComputed(function() {
                 var first = '';
@@ -60,6 +62,20 @@ define(['knockout', 'utils', 'productionrule'], function(ko, utils, ProductionRu
 
                 return follow;
             }, this);
+        },
+
+        firstFromSentence: function(sentence) {
+            var symbol = this._tryReadTerminal(sentence);
+            if (symbol) {
+                return [symbol];
+            }
+
+            symbol = this._tryReadNonTerminal(sentence);
+            if (symbol) {
+                return this.first(symbol);
+            }
+
+            return false;
         },
 
         first: function(symbol) {
@@ -219,6 +235,33 @@ define(['knockout', 'utils', 'productionrule'], function(ko, utils, ProductionRu
             }
 
             return false;
+        },
+
+        getPredictiveTable: function() {
+            var table = new PredictiveTable(this.grammar);
+            var prods = this.grammar.productionRules();
+
+            for (var i = 0, l = prods.length; i < l; ++i) {
+                var left = prods[i].leftSide();
+                var right = prods[i].rightSide();
+
+                for (var j = 0, m = right.length; j < m; ++j) {
+                    var symbols;
+
+                    if (right[j] === ProductionRule.EPSILON) {
+                        symbols = this.follow(left);
+                    }
+                    else {
+                        symbols = this.firstFromSentence(right[j]);
+                    }
+
+                    for (var k = 0, n = symbols.length; k < n; ++k) {
+                        table.setCell(left, symbols[k], left, right[j]);
+                    }
+                }
+            }
+
+            return table;
         }
 
     };

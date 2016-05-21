@@ -82,6 +82,15 @@ footer {
     font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
 }
 
+.table th,
+.table td {
+    text-align: center;
+}
+
+.table th {
+    background-color: #ececec;
+}
+
 /*****************************************/
 /**       CUSTOMIZAÇÃO TAGS INPUT       **/
 /*****************************************/
