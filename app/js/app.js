@@ -70,11 +70,10 @@ require(['knockout', 'jquery', 'grammar', 'transformations', 'file-saver-js', 'k
 
         transformLL1: function() {
             var step1 = Transformations.removeUselessSymbols(this.grammar);
-            var step2 = Transformations.removeEmptyProductions(step1);
-            var step3 = Transformations.factor(step2);
-            var step4 = Transformations.removeLeftRecursion(step3);
+            var step2 = Transformations.factor(step1);
+            var step3 = Transformations.removeLeftRecursion(step2);
 
-            this.transformedGrammar(step4);
+            this.transformedGrammar(step3);
         }
     };
 
