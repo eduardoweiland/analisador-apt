@@ -85,6 +85,19 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
                 return first;
             }, this);
 
+            this.allFollow = ko.pureComputed(function() {
+                var follow = '';
+                var nt = this.nonTerminalSymbols();
+
+                for (var i = 0, l = nt.length; i < l; ++i) {
+                    follow += 'FOLLOW(' + nt[i] + ') = ';
+                    follow += this.follow(nt[i]).join(', ');
+                    follow += '\n';
+                }
+
+                return follow;
+            }, this);
+
             if (data.productionRules) {
                 for (var i = 0, l = data.productionRules.length; i < l; ++i) {
                     this.productionRules.push(new ProductionRule(this, data.productionRules[i]));
@@ -335,8 +348,100 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
                 }
             }
 
+            first = utils.arrayUnique(first);
+
             this.cacheFirst[symbol] = first;
             return first;
+        },
+
+        follow: function(symbol) {
+            if (typeof this.cacheFollow[symbol] !== 'undefined') {
+                return this.cacheFollow[symbol];
+            }
+
+            var rules = this.productionRules();
+            var follow = [];
+
+            if (symbol === this.productionStartSymbol()) {
+                follow.push('$');
+            }
+
+            // Percorre todas as regras de produção da gramática
+            for (var i = 0, l = rules.length; i < l; ++i) {
+                var left = rules[i].leftSide();
+                var prods = rules[i].rightSide();
+
+                for (var j = 0, m = prods.length; j < m; ++j) {
+                    var idx = prods[j].indexOf(symbol);
+
+                    if (idx !== -1) {
+                        // Encontrou o símbolo não-terminal procurado nessa produção
+
+                        // Se está no final da produção, pega o FOLLOW do símbolo que o gerou
+                        if ((idx + symbol.length === prods[j].length) && (symbol !== left)) {
+                            follow = follow.concat(this.follow(left));
+                            continue;
+                        }
+
+                        // Se é seguido de um terminal, adiciona esse terminal ao FOLLOW
+                        var terminal = this._tryReadTerminal(prods[j].substr(idx + 1));
+                        if (terminal !== false) {
+                            follow.push(terminal);
+                            continue;
+                        }
+
+                        // Se é seguido de um não-terminal, pega o FIRST desse não-terminal
+                        var nonTerminal = this._tryReadNonTerminal(prods[j].substr(idx + 1));
+                        if (nonTerminal !== false) {
+                            follow = follow.concat(this.first(left));
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            follow = utils.arrayUnique(follow);
+
+            this.cacheFollow[symbol] = follow;
+            return follow;
+        },
+
+        /**
+         * Tenta ler um símbolo terminal da gramática do começo de `string`.
+         *
+         * @param {string} string String para realizar a leitura.
+         * @returns {string|boolean} Retorna o símbolo lido, ou false se não for um símbolo terminal.
+         */
+        _tryReadTerminal: function(string) {
+            return this._tryReadSymbol(string, this.terminalSymbols());
+        },
+
+        /**
+         * Tenta ler um símbolo não-terminal da gramática do começo de `string`.
+         *
+         * @param {string} string String para realizar a leitura.
+         * @returns {string|boolean} Retorna o símbolo lido, ou false se não for um símbolo não-terminal.
+         */
+        _tryReadNonTerminal: function(string) {
+            return this._tryReadSymbol(string, this.nonTerminalSymbols());
+        },
+
+        /**
+         * Tenta ler um símbolo do conjunto de `symbols` do começo de `string`. Se `string` não começar com nenhum dos
+         * símbolos aceitos, é retornado `false`.
+         *
+         * @param {string} string String que deve ser lida.
+         * @param {string[]} symbols Símbolos aceitos para leitura no começo da string.
+         * @returns {string|boolean} Retorna o símbolo lido, ou false se não for um símbolo aceito.
+         */
+        _tryReadSymbol: function(string, symbols) {
+            for (var i = 0, l = symbols.length; i < l; ++i) {
+                if (utils.stringStartsWith(string, symbols[i])) {
+                    return symbols[i];
+                }
+            }
+
+            return false;
         },
 
         toJSON: function() {
