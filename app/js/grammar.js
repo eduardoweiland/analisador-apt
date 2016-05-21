@@ -324,6 +324,12 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
 
             // Para cada produção do símbolo especificado:
             for (var i = 0, l = right.length; i < l; ++i) {
+                // Se a produção é a sentença vazia, adiciona ela ao FIRST
+                if (right[i] === ProductionRule.EPSILON) {
+                    first.push(ProductionRule.EPSILON);
+                    continue;
+                }
+
                 // Se começa com um símbolo terminal, adiciona esse terminal ao FIRST
                 for (var j = 0, m = t.length; j < m; ++j) {
                     if (utils.stringStartsWith(right[i], t[j])) {
