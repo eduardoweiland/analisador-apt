@@ -403,16 +403,29 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
                         }
 
                         // Se é seguido de um não-terminal, pega o FIRST desse não-terminal
+                        // - se o FIRST do NT contiver a sentença vazia, continua testando o resto da produção
+                        // - se chegar no final da produção com a sentença vazia, adiciona o FOLLOW do lado esquerdo
                         var nonTerminal = this._tryReadNonTerminal(prods[j].substr(idx + 1));
-                        if (nonTerminal !== false) {
-                            follow = follow.concat(this.first(nonTerminal));
-                            continue;
+                        while (nonTerminal !== false) {
+                            var firstNextNT = this.first(nonTerminal);
+                            follow = follow.concat(firstNextNT);
+
+                            if (firstNextNT.indexOf(ProductionRule.EPSILON) !== -1) {
+                                nonTerminal = this._tryReadNonTerminal(prods[j].substr(idx += 1 + nonTerminal.length));
+                            }
+                            else {
+                                break;
+                            }
+                        }
+
+                        if ((idx >= prods[j].length) && (symbol !== left)) {
+                            follow = follow.concat(this.follow(left));
                         }
                     }
                 }
             }
 
-            follow = utils.arrayUnique(follow);
+            follow = utils.arrayRemove(utils.arrayUnique(follow), [ProductionRule.EPSILON]);
 
             this.cacheFollow[symbol] = follow;
             return follow;
