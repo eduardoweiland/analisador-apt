@@ -171,6 +171,16 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
         },
 
         /**
+         * Método auxiliar para verificar se a gramática é válida (i.e. não contém erros).
+         *
+         * @returns {boolean} Retorna `true` se a gramática é válida, senão retorna `false`.
+         */
+        isValid: function() {
+            var errors = this.validate();
+            return errors.length === 0;
+        },
+
+        /**
          * Monta a string que representa o formalismo da gramática, incluindo
          * o conjunto de regras de produção.
          *
