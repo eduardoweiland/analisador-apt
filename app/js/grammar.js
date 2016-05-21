@@ -381,6 +381,12 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
                     var idx = prods[j].indexOf(symbol);
 
                     if (idx !== -1) {
+
+                        // FIX para não pegar símbolos que tenham o começo igual, p. ex. T' quando só deveria pegar T
+                        if (this._tryReadNonTerminal(prods[j].substr(idx)) !== symbol) {
+                            continue;
+                        }
+
                         // Encontrou o símbolo não-terminal procurado nessa produção
 
                         // Se está no final da produção, pega o FOLLOW do símbolo que o gerou
@@ -399,7 +405,7 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
                         // Se é seguido de um não-terminal, pega o FIRST desse não-terminal
                         var nonTerminal = this._tryReadNonTerminal(prods[j].substr(idx + 1));
                         if (nonTerminal !== false) {
-                            follow = follow.concat(this.first(left));
+                            follow = follow.concat(this.first(nonTerminal));
                             continue;
                         }
                     }
@@ -441,9 +447,11 @@ define(['knockout', 'productionrule', 'utils'], function(ko, ProductionRule, uti
          * @returns {string|boolean} Retorna o símbolo lido, ou false se não for um símbolo aceito.
          */
         _tryReadSymbol: function(string, symbols) {
-            for (var i = 0, l = symbols.length; i < l; ++i) {
-                if (utils.stringStartsWith(string, symbols[i])) {
-                    return symbols[i];
+            var symbolsSorted = utils.sortArrayLongestFirst(symbols);
+
+            for (var i = 0, l = symbolsSorted.length; i < l; ++i) {
+                if (utils.stringStartsWith(string, symbolsSorted[i])) {
+                    return symbolsSorted[i];
                 }
             }
 

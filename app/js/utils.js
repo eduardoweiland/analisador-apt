@@ -113,6 +113,18 @@ define(function() {
          */
         stringStartsWith: function(string, search) {
             return string.substr(0, search.length) === search;
+        },
+
+        /**
+         * Ordena um array de strings `array` deixando as strings mais longas no começo.
+         *
+         * @param {string[]} array Array para ser ordenado.
+         * @returns {string[]} Array ordenado.
+         */
+        sortArrayLongestFirst: function(array) {
+            return array.slice().sort(function(a, b) {
+                return b.length - a.length;
+            });
         }
 
     };
