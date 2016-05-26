@@ -35,7 +35,15 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, 
             this.cacheFirst = {};
             this.cacheFollow = {};
 
-            this.predictiveTable = ko.pureComputed(this.getPredictiveTable, this);
+            this.error = ko.observable();
+            this.predictiveTable = ko.computed(function() {
+                try {
+                    return this.getPredictiveTable();
+                }
+                catch (e) {
+                    this.error(e.message);
+                }
+            }, this);
 
             this.firstAllSymbols = ko.pureComputed(function() {
                 var first = '';
@@ -256,6 +264,9 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, 
                     }
 
                     for (var k = 0, n = symbols.length; k < n; ++k) {
+                        if (table.getRow(left).getCell(symbols[k]).production()) {
+                            throw new Error('Gramática é ambígua!');
+                        }
                         table.setCell(left, symbols[k], left, right[j]);
                     }
                 }

@@ -84,7 +84,7 @@ require(['knockout', 'jquery', 'grammar', 'transformations', 'syntacticanalysis'
 
         transformLL1: function() {
             var step1 = Transformations.removeUselessSymbols(this.grammar);
-            //var step2 = Transformations.factor(step1);
+            var step2 = Transformations.factor(step1);
             var step3 = Transformations.removeLeftRecursion(step1);
 
             this.transformedGrammar(step3);
