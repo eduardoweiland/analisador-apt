@@ -82,8 +82,8 @@ footer {
     font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
 }
 
-.table th,
-.table td {
+.table-apt th,
+.table-apt td {
     text-align: center;
 }
 
