@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-require(['knockout', 'jquery', 'grammar', 'transformations', 'syntacticanalysis', 'file-saver-js', 'ko-tagsinput'], function(ko, $, Grammar, Transformations, SyntacticAnalysis, saveAs) {
+require(['knockout', 'jquery', 'grammar', 'transformations', 'syntacticanalysis', 'sentencerecognition', 'file-saver-js', 'ko-tagsinput'], function(ko, $, Grammar, Transformations, SyntacticAnalysis, SentenceRecognition, saveAs) {
     'use strict';
 
     function App() {
@@ -38,6 +38,10 @@ require(['knockout', 'jquery', 'grammar', 'transformations', 'syntacticanalysis'
 
             return null;
         }, this);
+
+        this.sentence = ko.observable('');
+        this.recognized = ko.observable(false);
+        this.recognitionSteps = ko.observableArray([]);
     }
 
     App.prototype = {
@@ -80,10 +84,20 @@ require(['knockout', 'jquery', 'grammar', 'transformations', 'syntacticanalysis'
 
         transformLL1: function() {
             var step1 = Transformations.removeUselessSymbols(this.grammar);
-            var step2 = Transformations.factor(step1);
-            var step3 = Transformations.removeLeftRecursion(step2);
+            //var step2 = Transformations.factor(step1);
+            var step3 = Transformations.removeLeftRecursion(step1);
 
             this.transformedGrammar(step3);
+        },
+
+        recognizeSentence: function() {
+            var analysis = this.syntacticAnalysis();
+            var table = analysis.predictiveTable();
+            var proc = new SentenceRecognition(this.grammar, analysis, table);
+
+            var recognized = proc.recognize(this.sentence());
+            this.recognized(recognized);
+            this.recognitionSteps(proc.steps);
         }
     };
 

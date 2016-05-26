@@ -119,7 +119,7 @@
                         <div data-bind="with: syntacticAnalysis">
                             <pre data-bind="text: firstAllSymbols"></pre>
                             <pre data-bind="text: followAllSymbols"></pre>
-                            <table class="table table-bordered table-spacing" data-bind="with: predictiveTable">
+                            <table class="table table-apt table-bordered table-spacing" data-bind="with: predictiveTable">
                                 <tbody>
                                     <tr>
                                         <th>&nbsp;</th>
@@ -147,6 +147,39 @@
                         </h3>
                     </div>
                     <div class="panel-body">
+                        <div class="form-group" data-bind="visible: syntacticAnalysis">
+                            <label class="control-label">Digite a sentença para ser reconhecida:</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" data-bind="value: sentence"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-warning" data-bind="click: recognizeSentence">
+                                        <strong>Reconhecer</strong>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="alert alert-success text-center" role="alert" data-bind="visible: recognized()">
+                            <i class="fa fa-check-circle"></i> Sentença foi reconhecida!
+                        </div>
+                        <div class="alert alert-danger text-center" role="alert" data-bind="visible: !recognized()">
+                            <i class="fa fa-times-circle"></i> Sentença não foi reconhecida!
+                        </div>
+                        <table class="table table-bordered table-spacing">
+                            <thead>
+                                <tr>
+                                    <th>Pilha</th>
+                                    <th>Entrada</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach: recognitionSteps">
+                                <tr>
+                                    <td data-bind="text: stackDisplay"></td>
+                                    <td data-bind="text: input"></td>
+                                    <td data-bind="text: action"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

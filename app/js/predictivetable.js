@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-define(['knockout', 'productionrule'], function(ko, ProductionRule) {
+define(['knockout', 'productionrule', 'recognitionstep'], function(ko, ProductionRule, RecognitionStep) {
     'use strict';
 
     function PredictiveTableCell() {
