@@ -103,8 +103,15 @@
                             <i class="fa fa-exchange"></i>&nbsp;&nbsp;&nbsp;Transformação para LL(1)
                         </h3>
                     </div>
-                    <div class="panel-body" data-bind="with: transformedGrammar">
-                        <div class="formalism" data-bind="text: formalism"></div>
+                    <div class="panel-body">
+                        <div data-bind="with: syntacticAnalysis">
+                            <div class="alert alert-danger text-center" role="alert" data-bind="visible: error">
+                                <i class="fa fa-times-circle"></i> <span data-bind="text: error"></span>
+                            </div>
+                        </div>
+                        <div data-bind="with: transformedGrammar, hidden: syntacticAnalysis().error">
+                            <div class="formalism" data-bind="text: formalism"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -115,8 +122,8 @@
                             <i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;Tabela Sintática Preditiva
                         </h3>
                     </div>
-                    <div class="panel-body">
-                        <div data-bind="with: syntacticAnalysis">
+                    <div class="panel-body" data-bind="with: syntacticAnalysis">
+                        <div data-bind="visible: !error()">
                             <pre data-bind="text: firstAllSymbols"></pre>
                             <pre data-bind="text: followAllSymbols"></pre>
                             <table class="table table-apt table-bordered table-spacing" data-bind="with: predictiveTable">
@@ -147,7 +154,7 @@
                         </h3>
                     </div>
                     <div class="panel-body">
-                        <div class="form-group" data-bind="visible: syntacticAnalysis">
+                        <div class="form-group" data-bind="visible: syntacticAnalysis() && syntacticAnalysis().predictiveTable">
                             <label class="control-label">Digite a sentença para ser reconhecida:</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" data-bind="value: sentence"/>
@@ -158,13 +165,13 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="alert alert-success text-center" role="alert" data-bind="visible: recognized()">
+                        <div class="alert alert-success text-center" role="alert" data-bind="visible: sentence() && recognized()">
                             <i class="fa fa-check-circle"></i> Sentença foi reconhecida!
                         </div>
-                        <div class="alert alert-danger text-center" role="alert" data-bind="visible: !recognized()">
+                        <div class="alert alert-danger text-center" role="alert" data-bind="visible: sentence() && !recognized()">
                             <i class="fa fa-times-circle"></i> Sentença não foi reconhecida!
                         </div>
-                        <table class="table table-bordered table-spacing">
+                        <table class="table table-bordered table-spacing" data-bind="visible: recognitionSteps().length">
                             <thead>
                                 <tr>
                                     <th>Pilha</th>

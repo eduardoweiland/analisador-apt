@@ -1,0 +1,116 @@
+{
+  "grammar": {
+    "nonTerminalSymbols": [
+      "A",
+      "B"
+    ],
+    "terminalSymbols": [
+      "a",
+      "b"
+    ],
+    "productionSetSymbol": "P",
+    "productionStartSymbol": "A",
+    "productionRules": [
+      {
+        "leftSide": "A",
+        "rightSide": [
+          "aAB",
+          "bB"
+        ]
+      },
+      {
+        "leftSide": "B",
+        "rightSide": [
+          "ba",
+          "ε"
+        ]
+      }
+    ]
+  },
+  "transformedGrammar": {
+    "nonTerminalSymbols": [
+      "A",
+      "B"
+    ],
+    "terminalSymbols": [
+      "a",
+      "b",
+      "$"
+    ],
+    "productionSetSymbol": "P",
+    "productionStartSymbol": "A",
+    "productionRules": [
+      {
+        "leftSide": "A",
+        "rightSide": [
+          "aAB",
+          "bB"
+        ]
+      },
+      {
+        "leftSide": "B",
+        "rightSide": [
+          "ba",
+          "ε"
+        ]
+      }
+    ]
+  },
+  "syntacticAnalysis": {
+    "grammar": {
+      "nonTerminalSymbols": [
+        "A",
+        "B"
+      ],
+      "terminalSymbols": [
+        "a",
+        "b",
+        "$"
+      ],
+      "productionSetSymbol": "P",
+      "productionStartSymbol": "A",
+      "productionRules": [
+        {
+          "leftSide": "A",
+          "rightSide": [
+            "aAB",
+            "bB"
+          ]
+        },
+        {
+          "leftSide": "B",
+          "rightSide": [
+            "ba",
+            "ε"
+          ]
+        }
+      ]
+    },
+    "cacheFirst": {
+      "B": [
+        "b",
+        "ε"
+      ],
+      "A": [
+        "a",
+        "b"
+      ]
+    },
+    "cacheFollow": {
+      "B": [
+        "$",
+        "b"
+      ],
+      "A": [
+        "$",
+        "b"
+      ]
+    },
+    "error": "Gramática é ambígua!",
+    "firstAllSymbols": "FIRST(A) = a, b\nFIRST(B) = b, ε\n",
+    "followAllSymbols": "FOLLOW(A) = $, b\nFOLLOW(B) = $, b\n"
+  },
+  "sentence": "",
+  "recognized": false,
+  "recognitionSteps": []
+}
