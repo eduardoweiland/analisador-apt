@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, utils, ProductionRule, PredictiveTable) {
+define(['knockout', 'utils', 'productionrule', 'predictivetable', 'grammar'], function(ko, utils, ProductionRule, PredictiveTable, Grammar) {
     'use strict';
 
     function SyntacticAnalysis() {
@@ -73,17 +73,35 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, 
         },
 
         firstFromSentence: function(sentence) {
-            var symbol = this._tryReadTerminal(sentence);
-            if (symbol) {
-                return [symbol];
+            var input = sentence;
+            var first = [];
+
+            while (input) {
+                var symbol = this._tryReadTerminal(input);
+                if (symbol) {
+                    first.push(symbol);
+                    break;
+                }
+                else {
+                    symbol = this._tryReadNonTerminal(input);
+                    if (symbol) {
+                        first = first.concat(this.first(symbol));
+                        if (first.indexOf(ProductionRule.EPSILON) === -1) {
+                            break;
+                        }
+                    }
+                }
+
+                input = input.substr(symbol.length);
             }
 
-            symbol = this._tryReadNonTerminal(sentence);
-            if (symbol) {
-                return this.first(symbol);
+            first = utils.arrayUnique(first);
+
+            if (first.length === 0) {
+                return false;
             }
 
-            return false;
+            return first;
         },
 
         first: function(symbol) {
@@ -119,8 +137,13 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, 
                         if (utils.stringStartsWith(right[i], nt[j])) {
                             // Encontrou o NT do começo dessa produção, então:
                             // - se não for o mesmo da produção atual, busca o FIRST dele
+                            // - se o FIRST contém a sentença vazia, adiciona também o FOLLOW
                             if (nt[j] !== symbol) {
-                                first = first.concat(this.first(nt[j]));
+                                var firstNT = this.first(nt[j]);
+                                if (firstNT.indexOf(ProductionRule.EPSILON) !== -1) {
+                                    first = first.concat(this.follow(nt[j]));
+                                }
+                                first = first.concat(firstNT);
                             }
                             break;
                         }
@@ -264,10 +287,13 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, 
                     }
 
                     for (var k = 0, n = symbols.length; k < n; ++k) {
-                        if (table.getRow(left).getCell(symbols[k]).production()) {
-                            throw new Error('Gramática é ambígua!');
+                        if (symbols[k] !== ProductionRule.EPSILON) {
+                            var prod = table.getRow(left).getCell(symbols[k]).production();
+                            if (prod && prod !== right[j]) {
+                                throw new Error('Gramática é ambígua!');
+                            }
+                            table.setCell(left, symbols[k], left, right[j]);
                         }
-                        table.setCell(left, symbols[k], left, right[j]);
                     }
                 }
             }
