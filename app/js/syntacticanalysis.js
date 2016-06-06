@@ -73,17 +73,35 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable', 'grammar'], fu
         },
 
         firstFromSentence: function(sentence) {
-            var symbol = this._tryReadTerminal(sentence);
-            if (symbol) {
-                return [symbol];
+            var input = sentence;
+            var first = [];
+
+            while (input) {
+                var symbol = this._tryReadTerminal(input);
+                if (symbol) {
+                    first.push(symbol);
+                    break;
+                }
+                else {
+                    symbol = this._tryReadNonTerminal(input);
+                    if (symbol) {
+                        first = first.concat(this.first(symbol));
+                        if (first.indexOf(ProductionRule.EPSILON) === -1) {
+                            break;
+                        }
+                    }
+                }
+
+                input = input.substr(symbol.length);
             }
 
-            symbol = this._tryReadNonTerminal(sentence);
-            if (symbol) {
-                return this.first(symbol);
+            first = utils.arrayUnique(first);
+
+            if (first.length === 0) {
+                return false;
             }
 
-            return false;
+            return first;
         },
 
         first: function(symbol) {
@@ -270,7 +288,8 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable', 'grammar'], fu
 
                     for (var k = 0, n = symbols.length; k < n; ++k) {
                         if (symbols[k] !== ProductionRule.EPSILON) {
-                            if (table.getRow(left).getCell(symbols[k]).production()) {
+                            var prod = table.getRow(left).getCell(symbols[k]).production();
+                            if (prod && prod !== right[j]) {
                                 throw new Error('Gramática é ambígua!');
                             }
                             table.setCell(left, symbols[k], left, right[j]);

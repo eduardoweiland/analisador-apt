@@ -1,0 +1,37 @@
+{
+  "grammar": {
+    "nonTerminalSymbols": [
+      "A",
+      "B"
+    ],
+    "terminalSymbols": [
+      "b",
+      "c",
+      "d",
+      "f"
+    ],
+    "productionSetSymbol": "P",
+    "productionStartSymbol": "A",
+    "productionRules": [
+      {
+        "leftSide": "A",
+        "rightSide": [
+          "Bb",
+          "c",
+          "d"
+        ]
+      },
+      {
+        "leftSide": "B",
+        "rightSide": [
+          "f",
+          "ε"
+        ]
+      }
+    ]
+  },
+  "syntacticAnalysis": null,
+  "sentence": "",
+  "recognized": false,
+  "recognitionSteps": []
+}
