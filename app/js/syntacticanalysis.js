@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, utils, ProductionRule, PredictiveTable) {
+define(['knockout', 'utils', 'productionrule', 'predictivetable', 'grammar'], function(ko, utils, ProductionRule, PredictiveTable, Grammar) {
     'use strict';
 
     function SyntacticAnalysis() {
@@ -119,8 +119,13 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, 
                         if (utils.stringStartsWith(right[i], nt[j])) {
                             // Encontrou o NT do começo dessa produção, então:
                             // - se não for o mesmo da produção atual, busca o FIRST dele
+                            // - se o FIRST contém a sentença vazia, adiciona também o FOLLOW
                             if (nt[j] !== symbol) {
-                                first = first.concat(this.first(nt[j]));
+                                var firstNT = this.first(nt[j]);
+                                if (firstNT.indexOf(ProductionRule.EPSILON) !== -1) {
+                                    first = first.concat(this.follow(nt[j]));
+                                }
+                                first = first.concat(firstNT);
                             }
                             break;
                         }
@@ -264,10 +269,12 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable'], function(ko, 
                     }
 
                     for (var k = 0, n = symbols.length; k < n; ++k) {
-                        if (table.getRow(left).getCell(symbols[k]).production()) {
-                            throw new Error('Gramática é ambígua!');
+                        if (symbols[k] !== ProductionRule.EPSILON) {
+                            if (table.getRow(left).getCell(symbols[k]).production()) {
+                                throw new Error('Gramática é ambígua!');
+                            }
+                            table.setCell(left, symbols[k], left, right[j]);
                         }
-                        table.setCell(left, symbols[k], left, right[j]);
                     }
                 }
             }
