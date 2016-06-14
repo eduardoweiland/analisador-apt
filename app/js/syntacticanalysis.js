@@ -111,7 +111,6 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable', 'grammar'], fu
 
             var right = this.grammar.getProductions(symbol);
             var t = this.grammar.terminalSymbols();
-            var nt = this.grammar.nonTerminalSymbols();
             var first = this.cacheFirst[symbol] = [];
 
             // Para cada produção do símbolo especificado:
@@ -132,22 +131,9 @@ define(['knockout', 'utils', 'productionrule', 'predictivetable', 'grammar'], fu
                 }
 
                 // Se não começa com um símbolo terminal, deve pegar o FIRST do NT do começo da produção
+                // ou de um dos símbolos seguintes
                 if (j >= m) {
-                    for (j = 0, m = nt.length; j < m; ++j) {
-                        if (utils.stringStartsWith(right[i], nt[j])) {
-                            // Encontrou o NT do começo dessa produção, então:
-                            // - se não for o mesmo da produção atual, busca o FIRST dele
-                            // - se o FIRST contém a sentença vazia, adiciona também o FOLLOW
-                            if (nt[j] !== symbol) {
-                                var firstNT = this.first(nt[j]);
-                                if (firstNT.indexOf(ProductionRule.EPSILON) !== -1) {
-                                    first = first.concat(this.follow(nt[j]));
-                                }
-                                first = first.concat(firstNT);
-                            }
-                            break;
-                        }
-                    }
+                    first = this.firstFromSentence(right[i]);
                 }
             }
 
